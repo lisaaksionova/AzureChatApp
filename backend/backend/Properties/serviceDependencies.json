@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "signalr1": {
+      "type": "signalr",
+      "connectionId": "Azure:SignalR:ConnectionString",
+      "dynamicId": null
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:AzureChatApp:SqlDb"
+    },
+    "secrets1": {
+      "type": "secrets",
+      "dynamicId": null
+    }
+  }
+}

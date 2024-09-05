@@ -1,0 +1,37 @@
+
+<div class="container justify-content-center align-items-center" style="height: 100vh;" >
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="text-center text-dark mt-5">Live Chat</h2>
+      <div class="my-5 shadow p-3 mb-5 bg-body rounded " >
+        <div>
+          <button (click)="leaveChat()"type="button" class="btn mb-3 float-left btn-outline-danger">Leave</button>
+          <div style="width: 400px; height: 450px;">
+            <ng-container *ngFor="let message of this.chatService.messages$ | async">
+            <div
+            [ngClass]="{'incoming_msg': message.user != loggedInUserName, 'outgoing_msg': message.user === loggedInUserName}">
+              <div *ngIf="message.user != loggedInUserName" class="received_msg">
+                <div class="received_withd_msg">
+                  <p> {{message.message}}</p>
+                  <span class="time_date">{{message.user}} </span>
+                </div>
+              </div>
+              <div *ngIf="message.user === loggedInUserName" class="sent_msg">
+                <p>{{message.message}}   </p>
+                <span class="sentiment">Content: {{message.sentiment}}</span>
+              </div>
+            </div>
+          </ng-container>
+          </div>
+        </div>
+        
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <button [disabled]="!inputMessage" (click)="sendMessage()"class="btn btn-outline-secondary" type="button">Send</button>
+          </div>
+          <input (keydown.enter)="sendMessage()" [(ngModel)]="inputMessage"type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" placeholder="Type message">
+        </div>
+    </div>
+    
+  </div>
+</div>

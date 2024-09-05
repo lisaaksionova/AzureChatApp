@@ -1,0 +1,17 @@
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+
+    <!-- Icon -->
+    <div class="fadeIn first">
+      <img src="https://cdn.iconscout.com/icon/free/png-512/free-chat-icon-download-in-svg-png-gif-file-formats--message-communication-chatting-conversation-feedback-pack-business-icons-1794829.png?f=webp&w=256" width="150px" alt="profile"/>
+    </div>
+
+    <!-- Login Form -->
+    <form [formGroup]="logInForm">
+      <input formControlName="userName" type="text" id="login" class="fadeIn second" name="login" placeholder="login">
+      <input [disabled]="logInForm.invalid"(click)="logIn()" type="submit" class="fadeIn fourth" value="Log In">
+    </form>
+
+  </div>
+</div>
