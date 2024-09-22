@@ -41,7 +41,7 @@ namespace backend.Hub
         }
 
         // Method to handle user login and registration
-        public async Task LogIn(string userName)
+        public async Task LogIn(string userName, string password)
         {
             // Check if the user already exists in the database
             if (_appDbContext.Users.FirstOrDefault(u => u.Name == userName) != null)
@@ -51,7 +51,8 @@ namespace backend.Hub
             var user = new User
             {
                 Id = Guid.NewGuid().ToString(),
-                Name = userName
+                Name = userName,
+                Password = password
             };
 
             _appDbContext.Users.Add(user);
@@ -59,7 +60,7 @@ namespace backend.Hub
         }
 
         // Method to handle a user joining a chat room
-        public async Task JoinRoom(string userName, string room)
+        public async Task JoinRoom(string userName, string password, string room)
         {
             // Check if the user exists in the database
             if (_appDbContext.Users.FirstOrDefault(u => u.Name == userName) == null)
@@ -68,7 +69,7 @@ namespace backend.Hub
             // Create a new UserConnection object to represent the user's connection to the room
             var connection = new UserConnection
             {
-                User = userName,
+                User = new User { Name = userName, Password = password},
                 Room = room
             };
 
@@ -84,7 +85,7 @@ namespace backend.Hub
 
             // Notify all clients in the room that a new user has joined
             await Clients.Group(connection.Room!)
-                .SendAsync("ReceiveMessage", "Bot", $"{connection.User} has joined the group", DateTime.Now);
+                .SendAsync("ReceiveMessage", "Bot", $"{connection.User.Name} has joined the group", DateTime.Now);
         }
 
         // Method to handle sending a message to a chat room
@@ -104,7 +105,7 @@ namespace backend.Hub
                 var message = new Message
                 {
                     Id = Guid.NewGuid().ToString(),
-                    UserId = _appDbContext.Users.FirstOrDefault(u => u.Name == connection.User).Id,
+                    UserId = _appDbContext.Users.FirstOrDefault(u => u.Name == connection.User.Name).Id,
                     Content = messageContent,
                     SentimentResult = sentiment.ToString()
                 };
@@ -115,7 +116,7 @@ namespace backend.Hub
 
                 // Send the message to all clients in the room with sentiment analysis results
                 await Clients.Group(connection.Room)
-                    .SendAsync("ReceiveMessage", connection.User, message.Content, message.SentimentResult);
+                    .SendAsync("ReceiveMessage", connection.User.Name, message.Content, message.SentimentResult);
             }
         }
 
@@ -131,7 +132,7 @@ namespace backend.Hub
 
             // Notify all clients in the room that the user has left
             Clients.Group(connection.Room!)
-                .SendAsync("ReceiveMessage", "Bot", $"{connection.User} has left the group");
+                .SendAsync("ReceiveMessage", "Bot", $"{connection.User.Name} has left the group");
 
             // Remove the user connection from the dictionary
             _connection.Remove(Context.ConnectionId);
